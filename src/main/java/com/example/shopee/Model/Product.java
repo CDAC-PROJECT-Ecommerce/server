@@ -12,7 +12,7 @@ public class Product extends BaseEntity {
     @Column(name = "seller_id", nullable = false)
     private Long sellerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -22,7 +22,7 @@ public class Product extends BaseEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "price", nullable = false)  // Fixed: Removed precision/scale
+    @Column(name = "price", nullable = false)
     private Double price;
 
     @Column(name = "stock_quantity", nullable = false, columnDefinition = "INT DEFAULT 0")
