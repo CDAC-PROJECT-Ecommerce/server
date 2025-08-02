@@ -29,13 +29,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        return http.
-                csrf(AbstractHttpConfigurer::disable)
+        return http
+                        .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
+<<<<<<< HEAD
                         req -> req.requestMatchers("api/auth/**","profile/**").permitAll()
+=======
+                        req -> req.requestMatchers("api/auth/**",  "/api/auth/**",
+                        	    "/swagger-ui.html",
+                        	    "/swagger-ui/**",
+                        	    "/v3/api-docs",
+                        	    "/v3/api-docs/**",
+                        	    "/api-docs/**",
+                        	    "/swagger-resources/**",
+                        	    "/webjars/**",
+                        	    "/configuration/**",
+                        	    "/swagger*/**","api/products/**").permitAll()
+>>>>>>> main
                                 .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
+//                .httpBasic(Customizer.withDefaults())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -54,4 +67,5 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
+
 }
