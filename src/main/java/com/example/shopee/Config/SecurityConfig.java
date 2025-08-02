@@ -32,10 +32,19 @@ public class SecurityConfig {
         return http.
                 csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        req -> req.requestMatchers("api/auth/**").permitAll()
+                        req -> req.requestMatchers("api/auth/**",  "/api/auth/**",
+                        	    "/swagger-ui.html",
+                        	    "/swagger-ui/**",
+                        	    "/v3/api-docs",
+                        	    "/v3/api-docs/**",
+                        	    "/api-docs/**",
+                        	    "/swagger-resources/**",
+                        	    "/webjars/**",
+                        	    "/configuration/**",
+                        	    "/swagger*/**","api/products/**").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
+//                .httpBasic(Customizer.withDefaults())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
