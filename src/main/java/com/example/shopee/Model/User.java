@@ -1,6 +1,6 @@
 package com.example.shopee.Model;
 
-import com.example.shopee.Model.UserOrder.Order;
+import com.example.shopee.Model.UserOrder.Orders;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,7 +23,7 @@ public class User implements UserDetails {
     private String password;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Order> orders = new ArrayList<>();
+    private List<Orders> orders = new ArrayList<>();
 
 
     @Enumerated(value= EnumType.STRING)
