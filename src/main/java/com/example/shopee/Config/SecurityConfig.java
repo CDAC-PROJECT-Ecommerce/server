@@ -16,6 +16,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
 @Configuration
@@ -25,24 +27,27 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailService userDetailService;
     private final JWTFilter jwtFilter;
+    private final CustomAuthEntryPoint customAuthEntryPoint;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
-                        .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(customAuthEntryPoint))
                 .authorizeHttpRequests(
-
-                        req -> req.requestMatchers("api/auth/**",  "/api/auth/**",
-                        	    "/swagger-ui.html",
-                        	    "/swagger-ui/**",
-                        	    "/v3/api-docs",
-                        	    "/v3/api-docs/**",
-                        	    "/api-docs/**",
-                        	    "/swagger-resources/**",
-                        	    "/webjars/**",
-                        	    "/configuration/**",
-                        	    "/swagger*/**","api/products/**").permitAll()
+                        req -> req.requestMatchers("api/auth/**", "/api/auth/**",
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs",
+                                        "/v3/api-docs/**",
+                                        "/api-docs/**",
+                                        "/swagger-resources/**",
+                                        "/webjars/**",
+                                        "/configuration/**",
+                                        "/swagger*/**", "api/products/**").permitAll()
                                 .anyRequest().authenticated()
                 )
 //                .httpBasic(Customizer.withDefaults())
@@ -65,4 +70,18 @@ public class SecurityConfig {
         return authProvider;
     }
 
+//    Cors configuration
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:5173")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true); // crucial for token/cookies
+            }
+        };
+    }
 }
