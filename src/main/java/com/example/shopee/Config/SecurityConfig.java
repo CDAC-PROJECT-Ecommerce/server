@@ -32,9 +32,7 @@ public class SecurityConfig {
         return http
                         .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-<<<<<<< HEAD
-                        req -> req.requestMatchers("api/auth/**","profile/**").permitAll()
-=======
+
                         req -> req.requestMatchers("api/auth/**",  "/api/auth/**",
                         	    "/swagger-ui.html",
                         	    "/swagger-ui/**",
@@ -45,7 +43,6 @@ public class SecurityConfig {
                         	    "/webjars/**",
                         	    "/configuration/**",
                         	    "/swagger*/**","api/products/**").permitAll()
->>>>>>> main
                                 .anyRequest().authenticated()
                 )
 //                .httpBasic(Customizer.withDefaults())
