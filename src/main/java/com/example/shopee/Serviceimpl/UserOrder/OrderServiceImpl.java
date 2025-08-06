@@ -82,6 +82,7 @@ public class OrderServiceImpl implements OrderService {
             dto.setOrderDate(order.getOrderDate());
             dto.setTotalAmount(order.getTotalAmount());
             dto.setStatus(order.getStatus().name());
+            dto.setPaymentStatus(order.getPaymentStatus().name());
 
             AddressResponseDTO addressResponseDTO = new AddressResponseDTO(order.getAddress());
             dto.setAddress(addressResponseDTO);
