@@ -41,7 +41,10 @@ public class PaymentServiceImpl implements PaymentService {
             Orders order = orderRepo.findById(paymentRequestDto.getOrderId()).orElseThrow(()->  new ResourceNotFoundException("Order not found"));
 
             JSONObject orderRequest = new JSONObject();
-            orderRequest.put("amount", order.getTotalAmount()  * 1000);
+            System.out.println(order.getTotalAmount());
+
+            orderRequest.put("amount", Math.round(order.getTotalAmount()  * 100));
+            System.out.println(Math.round(order.getTotalAmount()  * 100));
             orderRequest.put("currency", "INR");
             orderRequest.put("receipt", "Pay00"+paymentRequestDto.getOrderId());
             orderRequest.put("payment_capture",1);
