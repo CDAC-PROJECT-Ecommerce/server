@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "orders")
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +23,12 @@ public class Order {
 
     @Enumerated(value=EnumType.STRING)
     private OrderStatus status;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "paymentStatus")
+    private OrderPaymentStatus paymentStatus;
+
+    private String razorpayOrderId;
 
     @ManyToOne
     @JoinColumn(name = "address_id")

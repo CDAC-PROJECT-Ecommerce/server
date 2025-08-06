@@ -1,30 +1,37 @@
 package com.example.shopee.Controller;
 
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
+import com.example.shopee.DTO.Payment.PaymentRequestDto;
+import com.example.shopee.DTO.Payment.PaymentVerificationRequestDto;
+import com.example.shopee.Service.PaymentService;
+import com.razorpay.RazorpayException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import com.razorpay.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("api/payment")
+@RequiredArgsConstructor
 public class PaymentController {
 
-    @Value("${razorpay.key_id}")
-    private String razorpayKeyId;
+    private final PaymentService paymentService;
 
-    @Value("${razorpay.key_secret}")
-    private String razorpayKeySecret;
+    @PostMapping("/createPayment")
+    public ResponseEntity<?> createOrder(@RequestBody PaymentRequestDto paymentRequestDto, Authentication authentication) throws RazorpayException {
+        System.out.println(authentication.getName());
+        return paymentService.makePayment(paymentRequestDto);
+    }
 
-    @PostMapping("/create-order")
-    public String createOrder() throws RazorpayException {
-        RazorpayClient razorpay = new RazorpayClient(razorpayKeyId, razorpayKeySecret);
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyPayment(@RequestBody PaymentVerificationRequestDto paymentVerificationRequestDto){
+         return paymentService.verifyPayment(paymentVerificationRequestDto);
+    }
 
-        JSONObject orderRequest = new JSONObject();
-        orderRequest.put("amount", 50000); // amount in paise
-        orderRequest.put("currency", "INR");
-        orderRequest.put("receipt", "order_rcptid_11");
-
-        Order order = razorpay.orders.create(orderRequest);
-        return order.toString();
+    @PostMapping("/failure")
+    public ResponseEntity<?> paymentFailure(@RequestBody PaymentVerificationRequestDto paymentVerificationRequestDto){
+        return paymentService.failurePayment(paymentVerificationRequestDto);
     }
 }

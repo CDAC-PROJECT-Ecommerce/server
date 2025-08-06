@@ -9,7 +9,8 @@ import com.example.shopee.Mapper.OrderMapper;
 import com.example.shopee.Model.Address;
 import com.example.shopee.Model.Product;
 import com.example.shopee.Model.User;
-import com.example.shopee.Model.UserOrder.Order;
+import com.example.shopee.Model.UserOrder.OrderPaymentStatus;
+import com.example.shopee.Model.UserOrder.Orders;
 import com.example.shopee.Model.UserOrder.OrderItem;
 import com.example.shopee.Repo.AddressRepo;
 import com.example.shopee.Repo.ProductRepository;
@@ -17,7 +18,6 @@ import com.example.shopee.Repo.UserOrder.OrderRepo;
 import com.example.shopee.Repo.UserRepo;
 import com.example.shopee.Service.UserOrder.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.shopee.Model.UserOrder.OrderStatus.PLACED;
 
@@ -46,11 +45,12 @@ public class OrderServiceImpl implements OrderService {
 
         Address address = addressRepo.findById(orderRequestDTO.getAddressId()).orElseThrow(()-> new ResourceNotFoundException("Address not found"));
 
-        Order order = new Order();
+        Orders order = new Orders();
         order.setUser(user);
         order.setAddress(address);
         order.setTotalAmount(orderRequestDTO.getTotalAmount());
         order.setStatus(PLACED);
+        order.setPaymentStatus(OrderPaymentStatus.PENDING);
         order.setOrderDate(LocalDateTime.now());
 
         List<OrderItem> orderItems = orderRequestDTO.getItems().stream().map(
@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
                 }
         ).toList();
         order.setItems(orderItems);
-        Order tempOrder = orderRepo.save(order);
+        Orders tempOrder = orderRepo.save(order);
 
         return ResponseEntity.ok(OrderMapper.convertToDto(tempOrder));
     }
@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        List<Order> orders = orderRepo.findByUser(user);
+        List<Orders> orders = orderRepo.findByUser(user);
 
         return ResponseEntity.ok(orders.stream().map(order -> {
             OrderResponseDTO dto = new OrderResponseDTO();

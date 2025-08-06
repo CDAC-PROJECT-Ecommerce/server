@@ -2,6 +2,7 @@ package com.example.shopee.DTO.UserOrder;
 
 import com.example.shopee.DTO.Address.AddressDto;
 import com.example.shopee.DTO.Address.AddressResponseDTO;
+import com.example.shopee.Model.UserOrder.OrderPaymentStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,4 +16,5 @@ public class OrderResponseDTO {
     private String status;
     private List<OrderItemDTO> items;
     private AddressResponseDTO address;
+    private String paymentStatus;
 }
