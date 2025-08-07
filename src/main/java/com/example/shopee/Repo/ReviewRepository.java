@@ -1,9 +1,8 @@
 package com.example.shopee.Repo;
 
+import com.example.shopee.Model.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.example.shopee.Model.Review;
 
 import java.util.List;
 
