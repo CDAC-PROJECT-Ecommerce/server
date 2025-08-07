@@ -7,16 +7,17 @@ import com.example.shopee.Model.Review;
 import com.example.shopee.Repo.ProductRepository;
 import com.example.shopee.Repo.ReviewRepository;
 import com.example.shopee.Service.ReviewService;
-
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
+
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
@@ -25,45 +26,66 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewDto createReview(ReviewDto reviewDto) {
         Product product = productRepository.findById(reviewDto.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + reviewDto.getProductId()));
-        Review review = modelMapper.map(reviewDto, Review.class);
+
+        boolean alreadyReviewed = reviewRepository.existsByCustomerIdAndProductIdAndOrderId(
+                reviewDto.getCustomerId(), reviewDto.getProductId(), reviewDto.getOrderId());
+
+        if (alreadyReviewed) {
+            throw new IllegalStateException("You have already reviewed this product");
+        }
+
+        Review review = new Review();
         review.setProduct(product);
-        Review savedReview = reviewRepository.save(review);
-        return modelMapper.map(savedReview, ReviewDto.class);
+        review.setCustomerId(reviewDto.getCustomerId());
+        review.setOrderId(reviewDto.getOrderId());
+        review.setRating(reviewDto.getRating());
+        review.setReviewTitle(reviewDto.getReviewTitle());
+        review.setReviewText(reviewDto.getReviewText());
+        review.setImageUrls(reviewDto.getImageUrls());
+        review.setIsVerifiedPurchase(true); // or add actual logic if needed
+        review.setStatus(Review.Status.PENDING);
+
+        Review saved = reviewRepository.save(review);
+        return modelMapper.map(saved, ReviewDto.class);
     }
 
     @Override
     public ReviewDto getReviewById(Long id) {
-        Review review = reviewRepository.findById(id)
+        return reviewRepository.findById(id)
+                .map(r -> modelMapper.map(r, ReviewDto.class))
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
-        return modelMapper.map(review, ReviewDto.class);
     }
 
     @Override
     public List<ReviewDto> getAllReviewsByProduct(Long productId) {
-        List<Review> reviews = reviewRepository.findByProductId(productId);
-        return reviews.stream()
-                .map(review -> modelMapper.map(review, ReviewDto.class))
+        return reviewRepository.findByProductId(productId)
+                .stream()
+                .map(r -> modelMapper.map(r, ReviewDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ReviewDto> getAllReviewsByCustomer(Long customerId) {
-        List<Review> reviews = reviewRepository.findByCustomerId(customerId);
-        return reviews.stream()
-                .map(review -> modelMapper.map(review, ReviewDto.class))
+        return reviewRepository.findByCustomerId(customerId)
+                .stream()
+                .map(r -> modelMapper.map(r, ReviewDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
     public ReviewDto updateReview(Long id, ReviewDto reviewDto) {
-        Review existingReview = reviewRepository.findById(id)
+        Review existing = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
-        
-        reviewDto.setId(null);
-        
-        modelMapper.map(reviewDto, existingReview);
-        Review updatedReview = reviewRepository.save(existingReview);
-        return modelMapper.map(updatedReview, ReviewDto.class);
+
+        if (reviewDto.getRating() != null) existing.setRating(reviewDto.getRating());
+        if (reviewDto.getReviewTitle() != null) existing.setReviewTitle(reviewDto.getReviewTitle());
+        if (reviewDto.getReviewText() != null) existing.setReviewText(reviewDto.getReviewText());
+        if (reviewDto.getImageUrls() != null) existing.setImageUrls(reviewDto.getImageUrls());
+        if (reviewDto.getIsVerifiedPurchase() != null) existing.setIsVerifiedPurchase(reviewDto.getIsVerifiedPurchase());
+        if (reviewDto.getStatus() != null) existing.setStatus(reviewDto.getStatus());
+
+        Review updated = reviewRepository.save(existing);
+        return modelMapper.map(updated, ReviewDto.class);
     }
 
     @Override
