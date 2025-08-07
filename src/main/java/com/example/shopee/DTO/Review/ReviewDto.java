@@ -18,4 +18,5 @@ public class ReviewDto {
     private String imageUrls;
     private Boolean isVerifiedPurchase;
     private Review.Status status;
+    private String customerName;
 }
