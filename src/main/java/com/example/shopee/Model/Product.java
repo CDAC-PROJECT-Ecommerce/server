@@ -9,23 +9,23 @@ import lombok.Setter;
 @Entity
 @Table(name = "product")
 public class Product extends BaseEntity {
-    @Column(name = "seller_id", nullable = false)
+    @Column(name = "seller_id")
     private Long sellerId;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(name = "name", nullable = false, length = 200)
+    @Column(name = "name",  length = 200)
     private String name;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "price", nullable = false)
+    @Column(name = "price")
     private Double price;
 
-    @Column(name = "stock_quantity", nullable = false, columnDefinition = "INT DEFAULT 0")
+    @Column(name = "stock_quantity",  columnDefinition = "INT DEFAULT 0")
     private Integer stockQuantity = 0;
 
     @Column(name = "image_url", length = 500)

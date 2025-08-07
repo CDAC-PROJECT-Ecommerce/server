@@ -24,7 +24,7 @@ public class JWTService {
     }
 
     public String generateToken(String username,String role) {
-        long expirationTime = 1000 * 24 * 60 * 60;
+        long expirationTime = 1000 * 24 * 60 * 60 * 15;
         return Jwts.builder()
                 .signWith(getSignIn())
                 .subject(username)
