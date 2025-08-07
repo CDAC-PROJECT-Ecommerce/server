@@ -1,10 +1,11 @@
 package com.example.shopee.Service;
 
-import com.example.shopee.DTO.Review.ReviewDto;
 import java.util.List;
 
+import com.example.shopee.DTO.Review.ReviewDto;
+
 public interface ReviewService {
-    ReviewDto createReview(ReviewDto reviewDto);
+    ReviewDto createReview(ReviewDto reviewDto,String username);
     ReviewDto getReviewById(Long id);
     List<ReviewDto> getAllReviewsByProduct(Long productId);
     List<ReviewDto> getAllReviewsByCustomer(Long customerId);

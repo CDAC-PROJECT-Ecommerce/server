@@ -15,27 +15,26 @@ import java.util.List;
 @RequestMapping("/api/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
-
     private final ReviewService reviewService;
+
     @PostMapping
     public ResponseEntity<?> createReview(@Valid @RequestBody ReviewDto reviewDto, Authentication authentication) {
         try {
-            ReviewDto createdReview = reviewService.createReview(reviewDto);
+            ReviewDto createdReview = reviewService.createReview(reviewDto,authentication.getName());
             return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
-            
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
+            if (e.getMessage().contains("already reviewed") || 
+                e.getMessage().contains("duplicate") || 
+                e.getMessage().contains("constraint")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("You have already reviewed this product");
+            }
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error creating review: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("Error creating review: " + e.getMessage());
         }
     }
-
-
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getReviewById(@PathVariable Long id) {
@@ -58,7 +57,7 @@ public class ReviewController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<?> getReviewsByCustomer(@PathVariable Long customerId) {
+    public ResponseEntity<?> getReviewsByCustomer(@PathVariable Long customerId, Authentication authentication) {
         try {
             List<ReviewDto> reviews = reviewService.getAllReviewsByCustomer(customerId);
             return ResponseEntity.ok(reviews);
@@ -71,8 +70,8 @@ public class ReviewController {
     public ResponseEntity<?> hasCustomerReviewedProduct(
             @RequestParam Long customerId,
             @RequestParam Long productId,
-            @RequestParam(required = false) Long orderId
-    ) {
+            @RequestParam(required = false) Long orderId,
+            Authentication authentication) {
         try {
             boolean hasReviewed = reviewService.hasCustomerReviewedProduct(customerId, productId, orderId);
             return ResponseEntity.ok(hasReviewed);
@@ -85,8 +84,7 @@ public class ReviewController {
     public ResponseEntity<?> updateReview(
             @PathVariable Long id,
             @Valid @RequestBody ReviewDto reviewDto,
-            Authentication authentication
-    ) {
+            Authentication authentication) {
         try {
             ReviewDto updatedReview = reviewService.updateReview(id, reviewDto);
             return ResponseEntity.ok(updatedReview);

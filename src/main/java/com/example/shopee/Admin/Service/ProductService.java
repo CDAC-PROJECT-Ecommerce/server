@@ -25,8 +25,8 @@ public class ProductService {
     public Product addProduct(ProductRequestDTO request) {
         Category category = categoryRepository.findByName(request.getCategory())
                 .orElseThrow(() -> new RuntimeException("Category not found: " + request.getCategory()));
-        String imageUrl="";
-        try{
+        String imageUrl = "";
+        try {
             imageUrl = imageUploadService.uploadImage(request.getImage());
         } catch (IOException e) {
             throw new ResourceNotFoundException("Image upload failed");
@@ -48,15 +48,21 @@ public class ProductService {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+
     public Product updateProduct(Long id, ProductRequestDTO dto) {
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-
+        String imageUrl = "";
+        try {
+            imageUrl = imageUploadService.uploadImage(dto.getImage());
+        } catch (IOException e) {
+            throw new ResourceNotFoundException("Image upload failed");
+        }
         existing.setName(dto.getName());
         existing.setPrice(dto.getPrice());
         existing.setDescription(dto.getDescription());
         existing.setStockQuantity(dto.getStockQuantity());
-        // Set image if updating image logic is needed
+        existing.setImageUrl(imageUrl);
         existing.setUpdatedAt(new Date());
         return productRepository.save(existing);
     }

@@ -51,13 +51,14 @@ public class AdminProductController {
             @RequestParam("name") String name,
             @RequestParam("price") double price,
             @RequestParam("description") String description,
-            @RequestParam("stockQuantity") int stockQuantity
-    ) {
+            @RequestParam("stockQuantity") int stockQuantity,
+            @RequestParam("image") MultipartFile image
+            ) {
         ProductRequestDTO productRequest = new ProductRequestDTO();
         productRequest.setName(name);
         productRequest.setPrice(price);
         productRequest.setDescription(description);
-
+        productRequest.setImage(image);
         productRequest.setStockQuantity(stockQuantity);
         Product updated = productService.updateProduct(id, productRequest);
         return ResponseEntity.ok(updated);
