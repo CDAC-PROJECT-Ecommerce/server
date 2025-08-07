@@ -31,6 +31,7 @@ public class ReviewServiceImpl implements ReviewService {
         User user = userRepo.findByUsername(username).orElseThrow(()->new ResourceNotFoundException("User not found"));
         Review review = modelMapper.map(reviewDto, Review.class);
         review.setProduct(product);
+        review.setCustomerId(user.getId());
         review.setCustomerName(user.getName());
         Review savedReview = reviewRepository.save(review);
         return modelMapper.map(savedReview, ReviewDto.class);
