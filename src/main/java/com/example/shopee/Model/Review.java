@@ -20,10 +20,8 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
-    private String customerName;
     
-    @Column(name = "customer_id")
+    @Column(name = "customer_id", nullable = false)
     private Long customerId;
     
     @Column(name = "order_id")

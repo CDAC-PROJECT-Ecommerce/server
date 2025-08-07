@@ -4,10 +4,8 @@ import com.example.shopee.DTO.Review.ReviewDto;
 import com.example.shopee.Exception.ResourceNotFoundException;
 import com.example.shopee.Model.Product;
 import com.example.shopee.Model.Review;
-import com.example.shopee.Model.User;
 import com.example.shopee.Repo.ProductRepository;
 import com.example.shopee.Repo.ReviewRepository;
-import com.example.shopee.Repo.UserRepo;
 import com.example.shopee.Service.ReviewService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,16 +20,13 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
-    private final UserRepo userRepo;
 
     @Override
-    public ReviewDto createReview(ReviewDto reviewDto, String username) {
+    public ReviewDto createReview(ReviewDto reviewDto) {
         Product product = productRepository.findById(reviewDto.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + reviewDto.getProductId()));
-        User user = userRepo.findByUsername(username).orElseThrow(()->new ResourceNotFoundException("User not found"));
         Review review = modelMapper.map(reviewDto, Review.class);
         review.setProduct(product);
-        review.setCustomerName(user.getName());
         Review savedReview = reviewRepository.save(review);
         return modelMapper.map(savedReview, ReviewDto.class);
     }
@@ -47,14 +42,7 @@ public class ReviewServiceImpl implements ReviewService {
     public List<ReviewDto> getAllReviewsByProduct(Long productId) {
         List<Review> reviews = reviewRepository.findByProductId(productId);
         return reviews.stream()
-                .map(review -> {
-                    ReviewDto dto = modelMapper.map(review, ReviewDto.class);
-
-                    userRepo.findById(review.getCustomerId())
-                            .ifPresent(user -> dto.setCustomerName(user.getName())); // or user.getFirstName() + " " + user.getLastName()
-
-                    return dto;
-                })
+                .map(review -> modelMapper.map(review, ReviewDto.class))
                 .collect(Collectors.toList());
     }
 

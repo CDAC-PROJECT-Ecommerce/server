@@ -20,7 +20,7 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<?> createReview(@Valid @RequestBody ReviewDto reviewDto, Authentication authentication) {
         try {
-            ReviewDto createdReview = reviewService.createReview(reviewDto,authentication.getName());
+            ReviewDto createdReview = reviewService.createReview(reviewDto);
             return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
