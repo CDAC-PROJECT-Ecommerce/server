@@ -30,7 +30,7 @@ public class CartServiceImpl implements CartService {
 
     // Method to add product to user using username and productId
     @Override
-    public CartDto addToCart(String username, Long productId, int quantity) {
+    public CartDto addToCart(String username, Long productId, int quantity,String imageUrl) {
 
         User user = userRepo.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -39,6 +39,8 @@ public class CartServiceImpl implements CartService {
             tempCart.setUser(user);
             return cartRepo.save(tempCart);
         });
+
+
 
         Product product = productRepo.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
@@ -53,7 +55,9 @@ public class CartServiceImpl implements CartService {
             item.setProduct(product);
             item.setQuantity(1);
             item.setCart(cart);
+            item.setImageUrl(imageUrl);
             cart.getCartItems().add(item);
+
         }
 
         return CartMapper.convertToDto(cartRepo.save(cart));

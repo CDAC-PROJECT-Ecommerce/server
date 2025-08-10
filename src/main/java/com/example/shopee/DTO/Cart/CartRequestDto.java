@@ -7,4 +7,5 @@ public class CartRequestDto {
     private String token;
     private Long productId;
     private int value;
+    private String imageUrl;
 }

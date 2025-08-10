@@ -8,4 +8,5 @@ public class CartItemDto {
     private String productName;
     private int quantity;
     private double price;
+    private String imageUrl;
 }

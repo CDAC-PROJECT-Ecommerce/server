@@ -17,7 +17,8 @@ public class CartController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addToCart(Authentication authentication, @RequestBody CartRequestDto cartRequestDto){
-        return ResponseEntity.ok(cartService.addToCart(authentication.getName(), cartRequestDto.getProductId(), 1));
+        System.out.println(cartRequestDto.toString());
+        return ResponseEntity.ok(cartService.addToCart(authentication.getName(), cartRequestDto.getProductId(), 1, cartRequestDto.getImageUrl()));
     }
 
     @GetMapping("/fetchCart")

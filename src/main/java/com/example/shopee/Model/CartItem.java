@@ -18,4 +18,6 @@ public class CartItem {
     @ManyToOne
     private Cart cart;
 
+    private String imageUrl;
+
 }
