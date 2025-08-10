@@ -3,7 +3,7 @@ package com.example.shopee.Service;
 import com.example.shopee.DTO.Cart.CartDto;
 
 public interface CartService {
-    CartDto addToCart(String token, Long productId, int quantity);
+    CartDto addToCart(String token, Long productId, int quantity,String imageUrl);
     CartDto getCartByUsername(String username);
     CartDto changeQuantity(String username, Long productId, int value);
 

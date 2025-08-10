@@ -9,6 +9,7 @@ public class CartDto {
 
     public Long cartId;
     private String username;
+    private String imageUrl;
     private List<CartItemDto> items;
 
 }

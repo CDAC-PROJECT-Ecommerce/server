@@ -23,6 +23,7 @@ public class CartMapper {
                     itemDto.setProductName(item.getProduct().getName());
                     itemDto.setPrice(item.getProduct().getPrice());
                     itemDto.setQuantity(item.getQuantity());
+                    itemDto.setImageUrl(item.getImageUrl());
                     return itemDto;
                 }
         ).toList();
