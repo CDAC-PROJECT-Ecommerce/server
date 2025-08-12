@@ -5,10 +5,13 @@ import com.example.shopee.Admin.Service.AdminOrderService;
 import com.example.shopee.DTO.UserOrder.OrderResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasAuthority('ADMIN')")
 @RestController
 @RequestMapping("api/admin/orders")
 @RequiredArgsConstructor

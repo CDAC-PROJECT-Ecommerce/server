@@ -15,6 +15,11 @@ public class CartController {
 
     private final CartService cartService;
 
+    @GetMapping("/test")
+    public String test(Authentication authentication) {
+        return authentication.getAuthorities().toString();
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> addToCart(Authentication authentication, @RequestBody CartRequestDto cartRequestDto){
         System.out.println(cartRequestDto.toString());
