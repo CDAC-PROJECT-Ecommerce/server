@@ -7,10 +7,12 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasAuthority('ADMIN')")
 @RestController
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor
@@ -19,13 +21,11 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    // ✅ GET all categories
     @GetMapping
     public ResponseEntity<List<Category>> getCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
-    // ✅ POST new category
     @PostMapping
     public ResponseEntity<Category> addCategory(@Valid @RequestBody CategoryRequest request) {
         Category created = categoryService.addCategory(request.getName());
